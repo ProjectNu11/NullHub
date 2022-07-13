@@ -41,7 +41,7 @@ class AppPath(BaseModel):
 class Config(BaseModel):
     title: str = "Project. Null Hub"
     port: int = 5000
-    base: str = "/"
+    base: str = ""
     data_path: DataPath = DataPath()
     app_path: AppPath = AppPath()
     repo_path: AnyHttpUrl = (
@@ -52,8 +52,13 @@ class Config(BaseModel):
 
     @validator("base")
     def __validate_base(cls, v):
-        if not v.endswith("/"):
-            v += "/"
+        print(v)
+        if v == "":
+            return v
+        if not v.startswith("/"):
+            v = f"/{v}"
+        if v.endswith("/"):
+            raise ValueError("Base path must not end with /.")
         return v
 
     def get_app_path(self, path: str) -> str:
